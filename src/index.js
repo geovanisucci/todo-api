@@ -1,4 +1,8 @@
 const app = require("./app");
+//start no banco de dados
+const db = require("./mongoosedb");
+
+db.init();
 
 const port = process.env.PORT || 3005;
 
