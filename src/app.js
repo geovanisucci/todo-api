@@ -8,8 +8,12 @@ app.use(
     })
 );
 
-app.get('/', (req, res) => {
-    res.send('TODO Api Service')
-  })
+const indexRoute = require("./routers/index");
+const todoRoute = require("./routers/todo");
+
+app.use("/", indexRoute);
+app.use("/todos", todoRoute);
+
+
 
 module.exports = app;
