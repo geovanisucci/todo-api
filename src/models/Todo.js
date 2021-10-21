@@ -12,7 +12,7 @@ const todoSchema = schema({
     },
     finished: {
         type: Boolean,
-        required = false,
+        required: false,
     },
     date: {
         type: Date,

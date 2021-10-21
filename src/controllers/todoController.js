@@ -1,27 +1,87 @@
-exports.get = (req, res) => {
-    const id = req.params.id;
-    console.log("Get");
-    res.send(`OK GET=${id}`);
+const service = require("../services/TodoService");
+
+exports.get = async (req, res) => {
+    try {
+        const todo = await service.getTodoById(req.params.id);
+
+        if (!todo) {
+            return res.status(404).json("There are no todo published with current id.");
+        }
+
+        res.json(todo);
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json("Error on fetch todo");
+
+    }
 }
 
-exports.getAll = (req, res) => {
+exports.getAll = async (req, res) => {
 
-    console.log("Get All");
-    res.send("OK GET ALL");
+    try {
+        const todos = await service.getTodos();
+
+        if (!todos) {
+            return res.status(404).json("There are no todos published yet.");
+        }
+
+        res.json(todos);
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json("Error on fetch todos");
+
+
+    }
 }
 
-exports.add = (req, res) => {
+exports.add = async (req, res) => {
 
-    console.log("Add");
-    res.send("OK ADD");
+    try {
+
+        const todoCreated = await service.addTodo(req.body);
+        res.status(201).json(todoCreated);
+
+    } catch (error) {
+        console.log(error);
+
+        return res.status(500).json("Error on add todo");
+    }
 }
 
-exports.update = (req, res) => {
-    console.log("Update");
-    res.send("OK UPDATE");
-}
-
-exports.delete = (req, res) => {
-    console.log("Delete");
-    res.send("OK DELETE");
-}
+exports.update = async (req, res) => {
+    let id = req.params.id;
+  
+    try {
+      const todo = {};
+      todo.title = req.body.title;
+      todo.description = req.body.description;
+      todo.finished = req.body.finished;
+  
+      const updatedTodo = await service.updateTodo(id, todo);
+  
+      if (updatedTodo.nModified === 0) {
+        return res.status(404).json({});
+      }
+  
+      //res.json(updatedTodo);
+      res.status(204).send();
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  };
+  
+  exports.delete = async (req, res) => {
+    let id = req.params.id;
+  
+    try {
+      const deleteResponse = await service.deleteTodo(id);
+      res.json(deleteResponse);
+    } catch (error) {
+      res.status(500).json({ error: error });
+    }
+  };
